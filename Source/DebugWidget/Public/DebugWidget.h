@@ -10,3 +10,4 @@ DECLARE_LOG_CATEGORY_CLASS(LogDebugWidgetComponent, Log, All);
 
 // Debug Widget Modul Log
 #define DWM_LOG(Verbosity, Format, ...) UE_LOG(LogDebugWidgetComponent, Verbosity, TEXT("%s(%s): %s"), *FString(__FUNCTION__), *FString::FromInt(__LINE__), *FString::Printf(TEXT(Format), ##__VA_ARGS__ ))
+// Just for a commit
