@@ -2,7 +2,7 @@
 
 #include "DebugWidgetPanel.h"
 #include "DebugWidget.h"
-#include "Geometry.h"
+#include "Layout/Geometry.h"
 #include "WidgetLayoutLibrary.h"
 #include "CanvasPanelSlot.h"
 

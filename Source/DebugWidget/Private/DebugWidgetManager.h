@@ -5,7 +5,7 @@
 #include "DebugWidget.h"
 #include "CoreMinimal.h"
 #include "DebugWidgetComponent.h"
-#include "CoreDelegates.h"
+#include "Misc/CoreDelegates.h"
 
 /**
  * Singleton manager for all DebugWidgetComponents
