@@ -5,10 +5,10 @@
 #include "DebugWidgetManager.h"
 #include "DebugWidgetPanel.h"
 #include "DebugWidgetText.h"
-#include "Engine/GameViewportClient.h"
+//#include "Engine/GameViewportClient.h"
 #include "Engine/Console.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "UMG.h"
 
 UDebugWidgetComponent::UDebugWidgetComponent(const FObjectInitializer& PCIP)
 	: Super(PCIP)

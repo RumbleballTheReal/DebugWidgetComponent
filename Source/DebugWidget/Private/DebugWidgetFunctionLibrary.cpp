@@ -4,6 +4,7 @@
 #include "DebugWidget.h"
 #include "Engine/GameViewportClient.h"
 #include "Engine/Console.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void UDebugWidgetFunctionLibrary::PrintStringAdvanced(UObject* WorldContextObject, const int32 Key /*= -1*/, const FString& Prefix /*= FString(TEXT(""))*/, const FString& InString /*= FString(TEXT("Hello"))*/, const FString Suffix /*= FString(TEXT(""))*/, bool bDisplaySource /*= true*/, bool bPrintToScreen /*= true*/, bool bPrintToLog /*= true*/, FLinearColor TextColor /*= FLinearColor(0.0, 0.66, 1.0)*/, float Duration /*= 2.f*/)

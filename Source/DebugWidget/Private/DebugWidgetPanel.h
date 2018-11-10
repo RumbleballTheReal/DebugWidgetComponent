@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "UMG.h"
 #include "DebugWidgetText.h"
+#include "ScrollBox.h"
 #include "DebugWidgetPanel.generated.h"
 
 class UBorder;

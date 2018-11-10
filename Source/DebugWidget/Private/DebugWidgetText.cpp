@@ -2,10 +2,35 @@
 
 #include "DebugWidgetText.h"
 #include "DebugWidget.h" 
+#include "WidgetTree.h"
 
 UDebugWidgetText::UDebugWidgetText(const FObjectInitializer& ObjectInitializer) : UUserWidget(ObjectInitializer)
 {
 
+}
+
+bool UDebugWidgetText::Initialize()
+{
+#pragma region PresetParent
+	// Note 
+	// With 4.21 UUserWidget::Initialize does a SetDesignerFlags call when Editor is present.
+	// That crashes cause in there the WidgetTree is first initialized later in Initialize.
+	// Thus we create it and then call down to parent.
+
+	// We don't want to initialize the widgets going into the widget templates, they're being setup in a
+	// different way, and don't need to be initialized in their template form.
+
+	// If it's not initialized initialize it, as long as it's not the CDO, we never initialize the CDO.
+	if (!bInitialized && ensure(CanInitialize()))
+	{
+		if (WidgetTree == nullptr)
+		{
+			WidgetTree = NewObject<UWidgetTree>(this, TEXT("WidgetTree"), RF_Transient);
+		}
+	}
+
+	return Super::Initialize();
+#pragma endregion
 }
 
 void UDebugWidgetText::NativePreConstruct()

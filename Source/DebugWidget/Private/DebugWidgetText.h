@@ -5,11 +5,10 @@
 #include "CoreMinimal.h"
 #include "DebugWidget.h"
 #include "Blueprint/UserWidget.h"
-#include "UMG.h"
 #include "ExpandedTextBlock.h"
+#include "Border.h"
 #include "DebugWidgetText.generated.h"
 
-class UBorder;
 class UTextBlock;
 
 /**
@@ -23,6 +22,8 @@ class UDebugWidgetText : public UUserWidget
 		UDebugWidgetText(const FObjectInitializer& ObjectInitializer);
 
 public:
+	virtual bool Initialize() override;
+
 	void SetTextColor(FLinearColor color);
 	void SetBackgroundColor(FLinearColor color);
 	void SetFontSize(int32 Size);
