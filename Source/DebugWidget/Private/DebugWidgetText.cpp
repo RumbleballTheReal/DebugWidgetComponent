@@ -2,7 +2,7 @@
 
 #include "DebugWidgetText.h"
 #include "DebugWidget.h" 
-#include "WidgetTree.h"
+#include "Blueprint/WidgetTree.h"
 
 UDebugWidgetText::UDebugWidgetText(const FObjectInitializer& ObjectInitializer) : UUserWidget(ObjectInitializer)
 {

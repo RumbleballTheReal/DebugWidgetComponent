@@ -6,7 +6,7 @@
 #include "DebugWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "ExpandedTextBlock.h"
-#include "Border.h"
+#include "Components/Border.h"
 #include "DebugWidgetText.generated.h"
 
 class UTextBlock;

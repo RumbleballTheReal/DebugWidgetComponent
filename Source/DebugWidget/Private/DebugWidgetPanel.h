@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "DebugWidgetText.h"
-#include "ScrollBox.h"
+#include "Components/ScrollBox.h"
 #include "DebugWidgetPanel.generated.h"
 
 class UBorder;

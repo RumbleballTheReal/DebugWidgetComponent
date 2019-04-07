@@ -4,7 +4,7 @@
 #include "DebugWidget.h"
 #include "Layout/Geometry.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
-#include "WidgetTree.h"
+#include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanelSlot.h"
 
 void UDebugWidgetPanel::AlignWithBottom(bool bWithBottom)

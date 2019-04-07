@@ -80,7 +80,7 @@ void UDebugWidgetComponent::BeginPlay()
 	DebugWidgetManager::Get()->UpdateOnScreenDebugMessageDisplay();
 }
 
-void UDebugWidgetComponent::SetWidget(UUserWidget* Widget)
+void UDebugWidgetComponent::SetWidget(UUserWidget* InWidget)
 {
 	DWM_LOG(Warning, "Do not set a Widget Class on this component!")
 }
