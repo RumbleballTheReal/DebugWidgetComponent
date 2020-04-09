@@ -1,0 +1,13 @@
+Version 1.4  2020.04.09
+-Added SetFontSize function to the compoennt
+-Fixed: Can't save when using the component in an actor placed in a streaming level.
+
+2018/03/01
+-Applied a fix that caused crash in startup of shipping build.
+2018/01/29
+-Extended the PrintStringAdvanced node with Prefix and Suffix. It does now also display the message source (the originating class) by choice.
+-PrintStringAdvanced now prints an error message if there is no Prefix, Message or Suffix
+2017/11/15
+-Widgets register to the manager now within BeginPlay. This fixes an issue where meta objects created by the engine were registered as well.
+This issue came up as messages did not time out when EnableScreenDebugMessages was unchecked.
+-Widgets now get updated only when the owning actor is in view (Actor::WasRenderedRecently).

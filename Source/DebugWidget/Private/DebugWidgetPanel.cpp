@@ -43,6 +43,7 @@ void UDebugWidgetPanel::AdditionalBuilding()
 				for (int32 i = 1; i <= NumAdditionalTexts; ++i)
 				{
 					UDebugWidgetText* Text = WidgetTree->ConstructWidget<UDebugWidgetText>(UDebugWidgetText::StaticClass(), *FString::Printf(TEXT("Text%d"), i));
+					Text->SetFontSize(fontSize);
 					ScrollBox->AddChild(Text);
 					AllTexts.Add(Text);
 				}
@@ -76,6 +77,7 @@ TSharedRef<SWidget> UDebugWidgetPanel::RebuildWidget()
 		Background->AddChild(ScrollBox);
 
 		UDebugWidgetText* Text = WidgetTree->ConstructWidget<UDebugWidgetText>(UDebugWidgetText::StaticClass(), *FString::Printf(TEXT("Text%d"), 0));
+		Text->SetFontSize(fontSize);
 		ScrollBox->AddChild(Text);
 		AllTexts.Add(Text);
 
@@ -83,4 +85,9 @@ TSharedRef<SWidget> UDebugWidgetPanel::RebuildWidget()
 	}
 
 	return Widget;
+}
+
+void UDebugWidgetPanel::SetFontSize(int32 Size)
+{
+	fontSize = Size;
 }

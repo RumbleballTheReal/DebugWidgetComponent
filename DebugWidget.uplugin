@@ -1,25 +1,23 @@
 {
-	"FileVersion" : 3,
-	"Version" : 1.3,
-	"VersionName" : "1.3",
-	"FriendlyName" : "DebugWidget",
-	"Description" : "This plugin adds an extendet WidgetComponent that displays debug text from the engine as well as component instance specific text.",
-	"Category" : "Debug",
-	"CreatedBy" : "Guenther Schrenk (Rumbleball)",
-	"CreatedByURL" : "",
-	"DocsURL" : "",
-	"MarketplaceURL" : "",
-	"SupportURL" : "",
-	"EnabledByDefault" : true,
-	"CanContainContent" : false,
-	"IsBetaVersion" : false,
-	"Installed" : false,
-	"Modules" :
-	[
+	"FileVersion": 3,
+	"Version": 0,
+        "VersionName": "1.4",
+	"FriendlyName": "DebugWidget",
+	"Description": "This plugin adds an extendet WidgetComponent that displays debug text from the engine as well as component instance specific text.",
+	"Category": "Debug",
+	"CreatedBy": "Guenther Schrenk (Rumbleball)",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EngineVersion": "4.24.0",
+	"CanContainContent": false,
+	"Installed": true,
+	"Modules": [
 		{
-			"Name" : "DebugWidget",
-			"Type" : "Developer",
-			"LoadingPhase" : "Default"
+			"Name": "DebugWidget",
+			"Type": "Developer",
+			"LoadingPhase": "Default"
 		}
 	]
 }

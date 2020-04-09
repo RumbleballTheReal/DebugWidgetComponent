@@ -18,80 +18,69 @@ class UDebugWidgetText;
 UCLASS(NotBlueprintable, NotBlueprintType, hidedropdown) // Prevent showing up in editor in any case
 class UDebugWidgetPanel : public UUserWidget
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	void SetFontSize(int32 Size);
-	void SetBackgroundColorText(FLinearColor Color);
-	void SetBackgroundColor(FLinearColor Color);
-	const TArray<UDebugWidgetText*>& GetAllTexts();
+    void SetFontSize(int32 Size);
+    void SetBackgroundColorText(FLinearColor Color);
+    void SetBackgroundColor(FLinearColor Color);
+    const TArray<UDebugWidgetText*>& GetAllTexts();
 
-	/**
-	 * Set the alignment of the texts with the panel
-	 */
-	void AlignWithBottom(bool bWithBottom);
+    /**
+     * Set the alignment of the texts with the panel
+     */
+    void AlignWithBottom(bool bWithBottom);
 
-	/**
-	 * Some stuff cannot be done within RebuildWidget, this is done here      
-	 */
-	void AdditionalBuilding();
+    /**
+     * Some stuff cannot be done within RebuildWidget, this is done here
+     */
+    void AdditionalBuilding();
 
-	FORCEINLINE bool GetNeedsFurtherBuilding()
-	{
-		return bNeedFurtherBuilding;
-	}
+    FORCEINLINE bool GetNeedsFurtherBuilding()
+    {
+        return bNeedFurtherBuilding;
+    }
 
 protected:
-	virtual TSharedRef<SWidget> RebuildWidget() override;
+    virtual TSharedRef<SWidget> RebuildWidget() override;
 
 private:
-	UPROPERTY()
-		UBorder* Background;
+    UPROPERTY()
+    UBorder* Background;
 
-	UPROPERTY()
-		UScrollBox* ScrollBox;
+    UPROPERTY()
+    UScrollBox* ScrollBox;
 
-	UPROPERTY()
-		TArray<UDebugWidgetText*> AllTexts;
+    UPROPERTY()
+    TArray<UDebugWidgetText*> AllTexts;
 
-	bool bNeedFurtherBuilding;
+	int32 fontSize = 12;
+    bool bNeedFurtherBuilding;
 };
 
-FORCEINLINE 
-void UDebugWidgetPanel::SetFontSize(int32 Size)
-{
-	if (AllTexts.Num() == 0)
-		return;
-
-	for (UDebugWidgetText* Text : AllTexts)
-	{
-		Text->SetFontSize(Size);
-	}
-}
-
-FORCEINLINE 
+FORCEINLINE
 void UDebugWidgetPanel::SetBackgroundColorText(FLinearColor Color)
 {
-	if (AllTexts.Num() == 0)
-		return;
+    if (AllTexts.Num() == 0)
+        return;
 
-	for (UDebugWidgetText* Text : AllTexts)
-	{
-		Text->SetBackgroundColor(Color);
-	}
+    for (UDebugWidgetText* Text : AllTexts)
+    {
+        Text->SetBackgroundColor(Color);
+    }
 }
 
-FORCEINLINE 
+FORCEINLINE
 void UDebugWidgetPanel::SetBackgroundColor(FLinearColor Color)
 {
-	if (Background)
-	{
-		Background->SetBrushColor(Color);
-	}
+    if (Background)
+    {
+        Background->SetBrushColor(Color);
+    }
 }
 
 FORCEINLINE
 const TArray<UDebugWidgetText*>& UDebugWidgetPanel::GetAllTexts()
 {
-	return AllTexts;
+    return AllTexts;
 }

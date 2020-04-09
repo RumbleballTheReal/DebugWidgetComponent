@@ -56,6 +56,7 @@ TSharedRef<SWidget> UDebugWidgetText::RebuildWidget()
 
 		Text = WidgetTree->ConstructWidget<UExpandedTextBlock>(UExpandedTextBlock::StaticClass(), TEXT("Text"));
 		Text->SetAutoWrapText(true);
+		Text->Font.Size = FontSize;
 		Background->SetContent(Text);
 		Text->SetText(FText::FromString(FString("RebuildWidget Text")));
 	}
