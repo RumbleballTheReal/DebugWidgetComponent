@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 //#include "Kismet/GameplayStatics.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogDebugWidget, Log, All);
 DECLARE_LOG_CATEGORY_CLASS(LogDebugWidgetComponent, Log, All);
 
 // Debug Widget Modul Log

@@ -1,3 +1,6 @@
+Version 1.5 2020.05.07
+-Update to UE4.25 with rework to internal message buffers cause unreal made the engine buffers private.
+
 Version 1.4  2020.04.09
 -Added SetFontSize function to the compoennt
 -Fixed: Can't save when using the component in an actor placed in a streaming level.

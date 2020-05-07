@@ -11,9 +11,10 @@ class UDebugWidgetText;
 
 /**
  * A WidgetComponent expansion that displays only a single widget that displays debug text.
- * The debug text is taken from GEngine->AddOnScreenDebugMessage (C++) or PrintString (Blueprint).
+ * The message buffers this widget reads from are stored in FDebugWidgetManager.
+ * To send a message to all DebugWidgetComponents, use PrinString_DW or PrintStringAdv_DW.
  * In addition, every component instance has its own message buffers to display instance specific
- * text. Use DebugWidgetComponent->DebugWidget_PrintString (C++ and Blueprint) to write to those.
+ * text. Use DebugWidgetComponent->DebugWidget_PrintString to write to those.
  *
  * DO NOT CHANGE THE WIDGET CLASS OF THIS COMPONENT!
  * If you need to display another widget, use the normal WidgetComponent
@@ -62,14 +63,7 @@ public:
     void DebugWidget_PrintString(UObject* WorldContextObject, const int32 MessageKey = -1, const FString& InString = FString(TEXT("Hello")), bool bPrintToWidget = true, bool bPrintToLog = true, FLinearColor TextColor = FLinearColor(0.0, 0.66, 1.0), float Duration = 2.f);
 
     UFUNCTION(BlueprintCallable, Category = "DebugWidget")
-    void SetFontSize(int32 size);
-
-    /**
-     * Returns bEnableScreenDebugMessageDisplay
-     */
-    bool GetEnableOnScreenMessages() {
-        return bEnableScreenDebugMessageDisplay;
-    }
+    void SetFontSize(int32 size); 
 
     // Set the color of the panel background
     UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "_Setup")
@@ -82,11 +76,6 @@ public:
     // Set the font size of the text
     UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "_Setup", meta = (ClampMin = "0", SliderExponent = "0.2"))
     int32 FontSize = 12;
-
-    // Uncheck if you want to disable the display of the messages from GEngine->AddOnScreenDebugMessage and Blueprint PrintString on the screen.
-    // If you have multiple components, unchecking a single one is enough.
-    UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "_Setup")
-    bool bEnableScreenDebugMessageDisplay = true;
 
     // Check if the messages should start filling from the bottom
     UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "_Setup")
@@ -102,10 +91,7 @@ public:
     bool bBeBillboard = false;
 
 protected: 
-	UDebugWidgetPanel* GetWidgetAsDebugPanel()
-	{
-		return Cast<UDebugWidgetPanel>(Widget);
-	}
+	UDebugWidgetPanel* GetWidgetAsDebugPanel();
 
 	UDebugWidgetPanel* CreateDebugPanel(int32 fontSize);
 
@@ -120,8 +106,8 @@ private:
     void PrintClearAllThatAreLeft(const UWorld *const World, const TArray<UDebugWidgetText*>& Textfields, int32& TextfieldIndex);
 
     // Priority screen messages that are specific to this component instance.
-    TArray<struct FScreenMessageString> SelfPriorityScreenMessages;
+    TArray<struct FScreenMessageString> SelfPriorityMessages;
 
     // Screen messages that are specific to this component instance.
-    TMap<int32, FScreenMessageString> SelfScreenMessages;
+    TMap<int32, FScreenMessageString> SelfMessages;
 };

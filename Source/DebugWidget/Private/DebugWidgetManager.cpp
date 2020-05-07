@@ -4,74 +4,116 @@
 #include "Engine.h"
 #include "DebugWidget.h"
 #include "Engine/World.h"
+#include "Engine/LocalPlayer.h"
+#include "Engine/GameViewportClient.h"
+#include "Engine/Console.h"
 
-// Definition of static member
-DebugWidgetManager* DebugWidgetManager::Instance = nullptr;
 
-void DebugWidgetManager::UpdateOnScreenDebugMessageDisplay()
+void FDebugWidgetManager::ManagerTick(FCoreDelegates::FSeverityMessageMap& MessageMap)
 {
-	bool bEnableMessagesDisplay = true;
+    // NOTE: MessageMap does not matter to us! It is only cause of the delegate we are bound to!
 
-	// Check all widgets for screen messages enabled. If a single one is false, result is false.
-	for (UDebugWidgetComponent* Widget : RegisteredComponents)
-	{
-		bEnableMessagesDisplay = bEnableMessagesDisplay && Widget->GetEnableOnScreenMessages();
-	}
 
-	if (GEngine)
-	{
-		GEngine->bEnableOnScreenDebugMessagesDisplay = bEnableMessagesDisplay;
-	}
+    // This part is only for local multi player tests relevant.
+    // The Manager exist even in local multi player tests only once. All widgets of all clients
+    // get registered on the same manager. Unfortunately, this manager will tick multiple times
+    // and thus every widget is updated multiple times. This fix shall prevent multiple updates during a single tick.
+    double TimeSeconds = FPlatformTime::Seconds();
+    if ((TimeSeconds - TimeSecondsLast) < 0.004)	// assume the ticks to come within 4ms
+    {
+        return;
+    }
+    TimeSecondsLast = TimeSeconds;
 
-	TimeSecondsLast = 0.f;
-}
+    for (UDebugWidgetComponent* Widget : RegisteredComponents)
+    {
+        if (Widget && Widget->GetOwner() && Widget->GetOwner()->WasRecentlyRendered())
+        {
+            Widget->UpdateTexts();
+        }
+    }
 
-void DebugWidgetManager::ManagerTick(FCoreDelegates::FSeverityMessageMap& MessageMap)
-{
-	// This part is only for local multi player tests relevant.
-	// The Manager exist even in local multi player tests only once. All widgets of all clients
-	// get registered on the same manager. Unfortunately, this manager will tick multiple times
-	// and thus every widget is updated multiple times. This fix shall prevent multiple updates during a single tick.
-	double TimeSeconds = FPlatformTime::Seconds();
-	if ((TimeSeconds - TimeSecondsLast) < 0.004)	// assume the ticks to come within 4ms
-	{
-		return;
-	}
-	TimeSecondsLast = TimeSeconds;
-	
-	for (UDebugWidgetComponent* Widget : RegisteredComponents)
-	{
-		if (Widget && Widget->GetOwner() && Widget->GetOwner()->WasRecentlyRendered())
-		{
-			Widget->UpdateTexts();
-		}
-	}
-
-	// If the messages are NOT displayed on the screen, display time will not be modified
-	// and messages will not be removed. Thus we need to do it on our own in this case.
-	if (!GEngine->bEnableOnScreenDebugMessagesDisplay && RegisteredComponents.Num() > 0)
+	// Increase message timers and remove messages when time went out.
+	if (RegisteredComponents.Num() > 0 && RegisteredComponents[0])
 	{
 		const UWorld *const World = RegisteredComponents[0]->GetWorld();
+		float deltaSeconds = World->GetDeltaSeconds();
 
-		for (TMap<int32, FScreenMessageString>::TIterator MsgIt(GEngine->ScreenMessages); MsgIt; ++MsgIt)
+		for (TMap<int32, FScreenMessageString>::TIterator MsgIt(Messages); MsgIt; ++MsgIt)
 		{
 			FScreenMessageString& Message = MsgIt.Value();
-			Message.CurrentTimeDisplayed += World->GetDeltaSeconds();
+			Message.CurrentTimeDisplayed += deltaSeconds;
 			if (Message.CurrentTimeDisplayed >= Message.TimeToDisplay)
 			{
 				MsgIt.RemoveCurrent();
 			}
 		}
 
-		for (int32 MessageIndex = GEngine->PriorityScreenMessages.Num() - 1; MessageIndex >= 0; MessageIndex--)
+		for (int32 MessageIndex = PriorityMessages.Num() - 1; MessageIndex >= 0; MessageIndex--)
 		{
-			FScreenMessageString& Message = GEngine->PriorityScreenMessages[MessageIndex];
-			Message.CurrentTimeDisplayed += World->GetDeltaSeconds();
+			FScreenMessageString& Message = PriorityMessages[MessageIndex];
+			Message.CurrentTimeDisplayed += deltaSeconds;
 			if (Message.CurrentTimeDisplayed >= Message.TimeToDisplay)
 			{
-				GEngine->PriorityScreenMessages.RemoveAt(MessageIndex);
+				PriorityMessages.RemoveAt(MessageIndex);
 			}
 		}
+	}
+}
+
+void FDebugWidgetManager::AddMessage(uint64 Key, float TimeToDisplay, FColor DisplayColor, const FString& DebugMessage)
+{
+    // Modified copy of UEngine::AddOnScreenMessage
+
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+    if (Key == (uint64)-1)
+    {
+        FScreenMessageString NewMessage;
+        NewMessage.CurrentTimeDisplayed = 0.0f;
+        NewMessage.Key = Key;
+        NewMessage.DisplayColor = DisplayColor;
+        NewMessage.TimeToDisplay = TimeToDisplay;
+        NewMessage.ScreenMessage = DebugMessage;
+        //NewMessage.TextScale = TextScale;
+        PriorityMessages.Insert(NewMessage, 0);
+    }
+    else
+    {
+        FScreenMessageString* Message = Messages.Find(Key);
+        if (Message == NULL)
+        {
+            FScreenMessageString NewMessage;
+            NewMessage.CurrentTimeDisplayed = 0.0f;
+            NewMessage.Key = Key;
+            NewMessage.DisplayColor = DisplayColor;
+            NewMessage.TimeToDisplay = TimeToDisplay;
+            NewMessage.ScreenMessage = DebugMessage;
+            //NewMessage.TextScale = TextScale;
+            Messages.Add((int32)Key, NewMessage);
+        }
+        else
+        {
+            // Set the message, and update the time to display and reset the current time.
+            Message->ScreenMessage = DebugMessage;
+            Message->DisplayColor = DisplayColor;
+            Message->TimeToDisplay = TimeToDisplay;
+            Message->CurrentTimeDisplayed = 0.0f;
+            //Message->TextScale = TextScale;
+        }
+    }
+#endif
+}
+
+void FDebugWidgetManager::ClearMessages(const bool bMessagesWithKey, const bool bMessagesWithoutKey)
+{
+	if (bMessagesWithKey)
+	{
+		Messages.Empty();
+	}
+
+	if (bMessagesWithoutKey)
+	{
+		PriorityMessages.Empty();
 	}
 }
 

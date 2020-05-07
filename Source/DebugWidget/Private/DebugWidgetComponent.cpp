@@ -58,7 +58,7 @@ void UDebugWidgetComponent::OnUnregister()
 {
     Super::OnUnregister();
 
-    DebugWidgetManager::Get()->UnregisterDebugWidget(this);
+    FDebugWidgetManager::Get().UnregisterDebugWidget(this);
 }
 
 void UDebugWidgetComponent::InitializeComponent()
@@ -75,8 +75,7 @@ void UDebugWidgetComponent::BeginPlay()
     return;
 #endif
 
-    DebugWidgetManager::Get()->RegisterDebugWidget(this);
-    DebugWidgetManager::Get()->UpdateOnScreenDebugMessageDisplay();
+    FDebugWidgetManager::Get().RegisterDebugWidget(this);
 }
 
 void UDebugWidgetComponent::SetWidget(UUserWidget* InWidget)
@@ -246,7 +245,7 @@ void UDebugWidgetComponent::DebugWidget_PrintString(UObject* WorldContextObject,
     uint64 UnsignedMessageKey = (uint64)MessageKey;
     if (UnsignedMessageKey == (uint64)-1)
     {
-        FScreenMessageString* NewMessage = new(SelfPriorityScreenMessages)FScreenMessageString();
+        FScreenMessageString* NewMessage = new(SelfPriorityMessages)FScreenMessageString();
         check(NewMessage);
         NewMessage->Key = UnsignedMessageKey;
         NewMessage->ScreenMessage = FinalDisplayString;
@@ -256,7 +255,7 @@ void UDebugWidgetComponent::DebugWidget_PrintString(UObject* WorldContextObject,
     }
     else
     {
-        FScreenMessageString* Message = SelfScreenMessages.Find(UnsignedMessageKey);
+        FScreenMessageString* Message = SelfMessages.Find(UnsignedMessageKey);
         if (Message == NULL) // Message key does not exist, create a new message
         {
             FScreenMessageString NewMessage;
@@ -265,7 +264,7 @@ void UDebugWidgetComponent::DebugWidget_PrintString(UObject* WorldContextObject,
             NewMessage.DisplayColor = TextColor.ToFColor(true);
             NewMessage.TimeToDisplay = Duration;
             NewMessage.ScreenMessage = FinalDisplayString;
-            SelfScreenMessages.Add((int32)UnsignedMessageKey, NewMessage);
+            SelfMessages.Add((int32)UnsignedMessageKey, NewMessage);
         }
         else // Message found. Update the time to display and reset the current time.
         {
@@ -288,6 +287,11 @@ void UDebugWidgetComponent::SetFontSize(int32 size)
 	SetWidget(CreateDebugPanel(size));
 }
 
+UDebugWidgetPanel* UDebugWidgetComponent::GetWidgetAsDebugPanel()
+{
+	return Cast<UDebugWidgetPanel>(Widget);
+}
+
 UDebugWidgetPanel* UDebugWidgetComponent::CreateDebugPanel(int32 fontSize)
 {
 	UDebugWidgetPanel* DebugPanel = CreateWidget<UDebugWidgetPanel>(GetWorld(), WidgetClass);
@@ -300,12 +304,11 @@ UDebugWidgetPanel* UDebugWidgetComponent::CreateDebugPanel(int32 fontSize)
 
 void UDebugWidgetComponent::PrintScreenMessages(const UWorld *const World, const TArray<UDebugWidgetText*>& Textfields, int32& TextfieldIndex)
 {
-    if (!GEngine)
-        return;
+	const TMap<int32, FScreenMessageString>& ManagerScreenMessages = FDebugWidgetManager::Get().Messages;
 
-    for (TMap<int32, FScreenMessageString>::TIterator MsgIt(GEngine->ScreenMessages); MsgIt; ++MsgIt)
+    for (TMap<int32, FScreenMessageString>::TConstIterator MsgIt(ManagerScreenMessages); MsgIt; ++MsgIt)
     {
-        FScreenMessageString& Message = MsgIt.Value();
+        const FScreenMessageString& Message = MsgIt.Value();
         UDebugWidgetText* Textfield = Textfields[TextfieldIndex];
         Textfield->SetFontSize(FontSize);
         Textfield->SetText(Message.ScreenMessage);
@@ -324,7 +327,7 @@ void UDebugWidgetComponent::PrintScreenMessages(const UWorld *const World, const
 
 void UDebugWidgetComponent::PrintSelfScreenMessages(const UWorld *const World, const TArray<UDebugWidgetText*>& Textfields, int32& TextfieldIndex)
 {
-    for (TMap<int32, FScreenMessageString>::TIterator MsgIt(SelfScreenMessages); MsgIt; ++MsgIt)
+    for (TMap<int32, FScreenMessageString>::TIterator MsgIt(SelfMessages); MsgIt; ++MsgIt)
     {
         FScreenMessageString& Message = MsgIt.Value();
         UDebugWidgetText* Textfield = Textfields[TextfieldIndex];
@@ -351,12 +354,11 @@ void UDebugWidgetComponent::PrintSelfScreenMessages(const UWorld *const World, c
 
 void UDebugWidgetComponent::PrintPriorityScreenMessages(const UWorld *const World, const TArray<UDebugWidgetText*>& Textfields, int32& TextfieldIndex)
 {
-    if (!GEngine)
-        return;
+	const TArray<struct FScreenMessageString> ManagerPriorityScreenMessages = FDebugWidgetManager::Get().PriorityMessages;
 
-    for (int32 MessageIndex = GEngine->PriorityScreenMessages.Num() - 1; MessageIndex >= 0; MessageIndex--)
+    for (int32 MessageIndex = ManagerPriorityScreenMessages.Num() - 1; MessageIndex >= 0; MessageIndex--)
     {
-        FScreenMessageString& Message = GEngine->PriorityScreenMessages[MessageIndex];
+        const FScreenMessageString& Message = ManagerPriorityScreenMessages[MessageIndex];
         UDebugWidgetText* Textfield = Textfields[TextfieldIndex];
         Textfield->SetFontSize(FontSize);
         Textfield->SetText(Message.ScreenMessage);
@@ -375,9 +377,9 @@ void UDebugWidgetComponent::PrintPriorityScreenMessages(const UWorld *const Worl
 
 void UDebugWidgetComponent::PrintSelfPriorityScreenMessages(const UWorld *const World, const TArray<UDebugWidgetText*>& Textfields, int32& TextfieldIndex)
 {
-    for (int32 MessageIndex = SelfPriorityScreenMessages.Num() - 1; MessageIndex >= 0; MessageIndex--)
+    for (int32 MessageIndex = SelfPriorityMessages.Num() - 1; MessageIndex >= 0; MessageIndex--)
     {
-        FScreenMessageString& Message = SelfPriorityScreenMessages[MessageIndex];
+        FScreenMessageString& Message = SelfPriorityMessages[MessageIndex];
         UDebugWidgetText* Textfield = Textfields[TextfieldIndex];
         Textfield->SetFontSize(FontSize);
         Textfield->SetText(Message.ScreenMessage);
@@ -387,7 +389,7 @@ void UDebugWidgetComponent::PrintSelfPriorityScreenMessages(const UWorld *const 
         Message.CurrentTimeDisplayed += World->GetDeltaSeconds();
         if (Message.CurrentTimeDisplayed >= Message.TimeToDisplay)
         {
-            SelfPriorityScreenMessages.RemoveAt(MessageIndex);
+            SelfPriorityMessages.RemoveAt(MessageIndex);
         }
 
         // Leave the loop if the boundary of text array is reached
