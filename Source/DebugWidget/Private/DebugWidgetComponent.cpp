@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DebugWidgetComponent.h"
-#include "DebugWidget.h"
 #include "DebugWidgetManager.h"
+#include "DebugWidget.h"
 #include "DebugWidgetPanel.h"
 #include "DebugWidgetText.h"
 //#include "Engine/GameViewportClient.h"
@@ -101,18 +101,18 @@ void UDebugWidgetComponent::InitWidget()
     // Don't do any work if Slate is not initialized
     if (FSlateApplication::IsInitialized())
     {
-        if (WidgetClass && Widget == nullptr && GetWorld())
+        if (WidgetClass && GetWidget() == nullptr && GetWorld())
         {
-			Widget = CreateDebugPanel(FontSize);
+            SetWidget(CreateDebugPanel(FontSize));
         }
 
 #if WITH_EDITOR
-        if (Widget && !GetWorld()->IsGameWorld() && !bEditTimeUsable)
+        if (GetWidget() && !GetWorld()->IsGameWorld() && !bEditTimeUsable)
         {
             if (!GEnableVREditorHacks)
             {
                 // Prevent native ticking of editor component previews
-                Widget->SetDesignerFlags(EWidgetDesignFlags::Designing);
+                GetWidget()->SetDesignerFlags(EWidgetDesignFlags::Designing);
             }
         }
 #endif
@@ -122,7 +122,7 @@ void UDebugWidgetComponent::InitWidget()
 
 void UDebugWidgetComponent::UpdateTexts()
 {
-    if (!Widget)
+    if (!GetWidget())
     {
         return;
     }
@@ -289,7 +289,7 @@ void UDebugWidgetComponent::SetFontSize(int32 size)
 
 UDebugWidgetPanel* UDebugWidgetComponent::GetWidgetAsDebugPanel()
 {
-	return Cast<UDebugWidgetPanel>(Widget);
+	return Cast<UDebugWidgetPanel>(GetWidget());
 }
 
 UDebugWidgetPanel* UDebugWidgetComponent::CreateDebugPanel(int32 fontSize)

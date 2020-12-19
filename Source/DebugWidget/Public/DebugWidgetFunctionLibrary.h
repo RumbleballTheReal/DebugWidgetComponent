@@ -13,7 +13,7 @@ UCLASS()
 class DEBUGWIDGET_API UDebugWidgetFunctionLibrary : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
-
+public: 
     /**
      * Same as PrintString_DW, but exposes the feature to reference a message with a key and some other functionality.
      * Prints a string to the log, and optionally, to the DebugWidgetComponents
@@ -32,7 +32,7 @@ class DEBUGWIDGET_API UDebugWidgetFunctionLibrary : public UBlueprintFunctionLib
      */
     UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, Keywords = "log print string debug widget", AdvancedDisplay = "6", DevelopmentOnly), Category = "Utilities|String")
     static void PrintStringAdv_DW(UObject* WorldContextObject, const int32 Key = -1, const FString& Prefix = FString(TEXT("")), const FString& InString = FString(TEXT("Hello")), const FString Suffix = FString(TEXT("")), bool bDisplaySource = true, bool bPrintToWidgets = true, bool bPrintToLog = true, FLinearColor TextColor = FLinearColor(0.0, 0.66, 1.0), float Duration = 2.f);
-
+     
     /**
      * Prints a string to the log, and optionally, to the DebugWidgetComponents
      * If Print To Log is true, it will be visible in the Output Log window.  Otherwise it will be logged only as 'Verbose', so it generally won't show up.

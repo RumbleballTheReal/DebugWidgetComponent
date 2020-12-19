@@ -7,6 +7,7 @@
 #include "Engine/LocalPlayer.h"
 #include "Engine/GameViewportClient.h"
 #include "Engine/Console.h"
+#include "DebugWidgetComponent.h"
 
 
 void FDebugWidgetManager::ManagerTick(FCoreDelegates::FSeverityMessageMap& MessageMap)
@@ -115,5 +116,44 @@ void FDebugWidgetManager::ClearMessages(const bool bMessagesWithKey, const bool 
 	{
 		PriorityMessages.Empty();
 	}
+}
+
+FDebugWidgetManager& FDebugWidgetManager::Get()
+{
+	static FDebugWidgetManager Instance;
+	if (!Instance.DH_OnGetOnScreenMessage.IsValid())
+	{
+		Instance.DH_OnGetOnScreenMessage = FCoreDelegates::OnGetOnScreenMessages.AddRaw(&Instance, &FDebugWidgetManager::ManagerTick);
+	}
+
+	return Instance;
+}
+
+void FDebugWidgetManager::RegisterDebugWidget(UDebugWidgetComponent* DebugWidget)
+{
+    if (!DebugWidget)
+    {
+		return;
+    }
+    if (!DebugWidget->IsValidLowLevel())
+    {
+		return;
+    }
+	RegisteredComponents.AddUnique(DebugWidget);
+	//DWM_LOG(Warning, "Num Registered: %d", RegisteredComponents.Num());
+}
+
+void FDebugWidgetManager::UnregisterDebugWidget(UDebugWidgetComponent* DebugWidget)
+{
+	if (!DebugWidget)
+	{
+		return;
+	}
+	if (!DebugWidget->IsValidLowLevel())
+	{
+		return;
+	}
+
+	RegisteredComponents.Remove(DebugWidget);
 }
 

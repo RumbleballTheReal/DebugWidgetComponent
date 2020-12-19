@@ -19,7 +19,7 @@ class UDebugWidgetText : public UUserWidget
 {
     GENERATED_BODY()
 
-    UDebugWidgetText(const FObjectInitializer& ObjectInitializer);
+		UDebugWidgetText(const FObjectInitializer& ObjectInitializer);
 
 public:
     virtual bool Initialize() override;

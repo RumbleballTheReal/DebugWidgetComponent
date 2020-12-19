@@ -2,11 +2,13 @@
 
 #pragma once
 
-#include "DebugWidget.h"
+//#include "DebugWidget.h"
 #include "CoreMinimal.h"
-#include "DebugWidgetComponent.h"
+//#include "DebugWidgetComponent.h"
 #include "Delegates/IDelegateInstance.h"
 #include "Misc/CoreDelegates.h"
+
+class UDebugWidgetComponent;
 
 /**
  * Singleton manager for all DebugWidgetComponents
@@ -68,38 +70,4 @@ private:
 
 	double TimeSecondsLast;
 };
-
-FORCEINLINE
-FDebugWidgetManager& FDebugWidgetManager::Get()
-{
-	static FDebugWidgetManager Instance;
-	if (!Instance.DH_OnGetOnScreenMessage.IsValid())
-	{
-		Instance.DH_OnGetOnScreenMessage = FCoreDelegates::OnGetOnScreenMessages.AddRaw(&Instance, &FDebugWidgetManager::ManagerTick);
-	}
-
-	return Instance;
-}
-
-FORCEINLINE
-void FDebugWidgetManager::RegisterDebugWidget(UDebugWidgetComponent* DebugWidget)
-{
-	if (!DebugWidget)
-		return;
-	if (!DebugWidget->IsValidLowLevel())
-		return;
-	RegisteredComponents.AddUnique(DebugWidget);
-	//DWM_LOG(Warning, "Num Registered: %d", RegisteredComponents.Num());
-}
-
-FORCEINLINE
-void FDebugWidgetManager::UnregisterDebugWidget(UDebugWidgetComponent* DebugWidget)
-{
-	if (!DebugWidget)
-		return;
-	if (!DebugWidget->IsValidLowLevel())
-		return;
-
-	RegisteredComponents.Remove(DebugWidget);
-}
 

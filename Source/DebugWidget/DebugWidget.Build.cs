@@ -2,11 +2,15 @@
 
 using UnrealBuildTool;
 
-public class DebugWidget: ModuleRules
+public class DebugWidget : ModuleRules
 {
 	public DebugWidget(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		//PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
+		PrivateIncludePaths.AddRange(new string[] {
+		"DebugWidget/Private/",
+		});
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
@@ -20,7 +24,7 @@ public class DebugWidget: ModuleRules
 
         // To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
 
-        MinFilesUsingPrecompiledHeaderOverride = 1;
-        bFasterWithoutUnity = true;
+        //MinFilesUsingPrecompiledHeaderOverride = 1;
+		bUseUnity = false;
     }
 }

@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 0,
-  "VersionName": "1.5",
+    "VersionName": "1.6",
 	"FriendlyName": "DebugWidget",
 	"Description": "This plugin adds an extendet WidgetComponent that displays debug text from the buffers in DebugWidgetManager and component instance specific text.",
 	"Category": "Debug",
@@ -10,13 +10,13 @@
 	"DocsURL": "",
 	"MarketplaceURL": "",
 	"SupportURL": "",
-	"EngineVersion": "4.25.0",
+	"EngineVersion": "4.26.0",
 	"CanContainContent": false,
 	"Installed": true,
 	"Modules": [
     {
       "Name": "DebugWidget",
-      "Type": "UncookedOnly",
+      "Type": "DeveloperTool",
       "LoadingPhase": "Default"
     }
 	]
